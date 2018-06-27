@@ -1,0 +1,51 @@
+﻿@model ICollection<Sports_Betting_MVC.Models.MatchViewModel>
+@{
+    var models = Model.ToList();
+    List<string> messages = this.Session["message"] != null ? this.Session["message"] as List<string> : new List<string>();
+}
+
+<div class="text-right">
+    @Html.ActionLink("Edit Mode", "EditModePartial", "Betting" , new { }, new { @class = "btn btn-primary" })
+</div>
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th class="text-center">EventName</th>
+            <th class="text-center">OddsForFirstTeam</th>
+            <th class="text-center">OddsForDraw</th>
+            <th class="text-center">OddsForSecondTeam</th>
+            <th class="text-center">EventStartDate</th>
+        </tr>
+    </thead>
+    <tbody>
+        @for (int i = 0; i < models.Count; i++)
+        {
+            string className = i % 2 == 0 ? "success" : "warning";
+            if (DateTime.UtcNow > models[i].StartDate)
+            {
+                className = "danger";
+            }
+
+            <tr class="@className">
+                <td>@models[i].Name</td>
+                <td >@Html.ActionLink(String.Format("{0:0.00}", models[i].OddsForFirstTeam), "Logging",
+                    new { Eventid = models[i].Id, selectedOdd = "OddsForFirstTeam", coeff = models[i].OddsForFirstTeam })</td>
+                <td> @Html.ActionLink(String.Format("{0:0.00}", models[i].OddsForDraw), "Logging",
+                    new { Eventid = models[i].Id, selectedOdd = "OddsForDraw", coeff = models[i].OddsForDraw })</td>
+                <td> @Html.ActionLink(String.Format("{0:0.00}", models[i].OddsForSecondTeam), "Logging",
+                    new { Eventid = models[i].Id, selectedOdd = "OddsForSecondTeam", coeff = models[i].OddsForSecondTeam })</td>
+                <td> @models[i].StartDate</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="panel">
+    <div class="panel-title">Console</div>
+    <div class="panel-body" id="Console">
+        @foreach (var item in messages)
+        {
+            <div>@item</div>
+        }
+    </div>
+</div>

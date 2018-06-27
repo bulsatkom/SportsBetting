@@ -1,0 +1,69 @@
+﻿@model ICollection<Sports_Betting_MVC.Models.EditViewModel>
+
+@{
+    var models = Model.ToList();
+}
+
+<div class="text-right">
+    @Html.ActionLink("Preview Mode", "PreviewModePartial","Betting", new { }, new { @class = "btn btn-primary" })
+</div>
+<table class="table table-hover table-responsive table-striped">
+    <thead>
+        <tr>
+            <th class="text-center">EventId</th>
+            <th class="text-center">EventName</th>
+            <th class="text-center">OddsForFirstTeam</th>
+            <th class="text-center">OddsForDraw</th>
+            <th class="text-center">OddsForSecondTeam</th>
+            <th class="text-center">EventStartDate</th>
+        </tr>
+    </thead>
+    <tbody class="elementsBody">
+        @for (int i = 0; i < models.Count; i++)
+        {
+            <tr>
+                <td>@Html.DisplayFor(x => models[i].Id, new { @class ="id" + models[i].Id })</td>
+                <td>@Html.TextBoxFor(x => models[i].Name, new { @class = "name" + models[i].Id })</td>
+                <td>@Html.TextBoxFor(x => models[i].OddsForFirstTeam, new { @class = "odd1" + models[i].Id })</td>
+                <td>@Html.TextBoxFor(x => models[i].OddsForDraw, new { @class = "oddx" + models[i].Id })</td>
+                <td>@Html.TextBoxFor(x => models[i].OddsForSecondTeam, new { @class = "odd2" + models[i].Id })</td>
+                <td>@Html.TextBoxFor(x => models[i].StartDate, new { @class = "date" + models[i].Id, type = "dateTime" })</td>
+                @*fix this*@
+                <td> <button class = "btn btn-success haidede @models[i].Id" >Save</button></td>
+                <td>@Html.ActionLink("Delete", "DeleteEvent", new { id = models[i].Id, }, new { @class = "btn btn-danger" })</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@Html.ActionLink("Add New", "AddNew", new { }, new { @class = "btn btn-primary" })
+
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('.elementsBody').on('click', '.haidede', (function (e) {
+                var classes = e.target.classList;
+                var id = classes[classes.length - 1];
+                var name = $('.name' + classes[classes.length - 1]).val();
+                var odd1 = $('.odd1' + classes[classes.length - 1]).val();
+                var oddx = $('.oddx' + classes[classes.length - 1]).val();
+                var odd2 = $('.odd2' + classes[classes.length - 1]).val();
+                var date = $('.date' + classes[classes.length - 1]).val();
+                $.ajax({
+                    type: "POST",
+                    url: "/Betting/SaveEvent",
+                    contentType: "application/json; charset=utf-8",
+                    data: '{"id":"' + id + '","StartDate":"' + date + '","Name":"' + name + '","OddsForSecondTeam":"' + odd2 + '","OddsForDraw":"' + oddx + '","OddsForFirstTeam":"' + odd1 + '"}',
+                    dataType: "html",
+
+                    success: function (result, status, xhr) {
+                        $('body').html(result);
+                    },
+                    error: function (xhr, status, error) {
+         
+                    }
+                });
+            }));
+        });
+    </script>
+}
